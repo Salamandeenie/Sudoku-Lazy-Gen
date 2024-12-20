@@ -8,3 +8,5 @@ I may revisit this project, and rework how it builds boards (Perhaps calculating
 
 
 If you are using this tool, I HIGHLY suggest not generating more than like 2,500 boards on a computer, and no more than like 500 on a mobile device. But I won't stop you. It ain't my fault you want to live on the danger side.
+
+[[https://salamandeenie.github.io/Sudoku-Lazy-Gen/|Here is the live version]]
