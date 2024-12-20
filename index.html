@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Layout</title>
+    <script src="cracker.js"></script>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Sudoku Board Container */
+        #sudoku-board {
+            display: grid;
+            grid-template-columns: repeat(3, auto);
+            grid-template-rows: repeat(3, auto);
+            gap: 5px; /* Gap between 3x3 blocks */
+        }
+
+        /* Each 3x3 block */
+        .sudoku-block {
+            display: grid;
+            grid-template-columns: repeat(3, 40px);
+            grid-template-rows: repeat(3, 40px);
+            gap: 1px; /* Thin border between individual cells */
+            background-color: #222;
+        }
+
+        /* Individual cells */
+        .sudoku-cell {
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            text-align: center;
+            line-height: 40px;
+            font-size: 18px;
+            color: white;
+        }
+
+        /* Scrollable table below the Sudoku board */
+        #scrollable-table-container {
+            width: 80%;
+            max-height: 200px;
+            overflow-y: scroll;
+            margin-top: 20px;
+            border: 2px solid white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #444;
+        }
+
+        table td {
+            background-color: #222;
+        }
+
+        /* Optional: Add hover effect on table rows */
+        table tr:hover {
+            background-color: #555;
+        }
+
+        #scrollable-table-container table td#tableButton {
+            background-color: #555;
+            color: white;
+            border: 1px solid #555;
+            cursor: pointer;
+            text-align: center;
+            padding: 10px;
+            transition: all 0.2s ease;
+        }
+
+        #scrollable-table-container table td#tableButton:hover {
+            background-color: #f4f;
+            border-color: white; /* Highlight the border */
+        }
+
+        #scrollable-table-container table td#tableButton:active {
+            background-color: #000;
+            border-color: #f4f; /* Highlight the border */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sudoku Board -->
+    <div id="sudoku-board">
+        <!-- Blocks and Cells -->
+        ${generateBlocks()}
+    </div>
+
+    <!-- Scrollable Table -->
+    <div id="scrollable-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 10%;">#</th>
+                    <th>ID Code</th>
+                    <th style="width: 20%">Show Corners</th>
+                </tr>
+            </thead>
+            <tbody id="TableOfBoards">
+                <tr>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const tableBoards = document.getElementById("TableOfBoards");
+        var counter = 1;
+
+        function generateTableEntry(TL, TR, BL, BR)
+        {
+            tableBoards.innerHTML += `<tr><td>${counter}</td> <td>[${TL}][${TR}][${BL}][${BR}]</td> <td id="tableButton" onClick="IndexesToBoard(${TL},${TR},${BL},${BR})">Show</td></tr>`
+            counter++;
+        }
+
+        function IndexesToBoard(TL, TR, BL, BR) 
+        {
+            // Generate the arrays for each corner
+            let { topLeft, topRight, bottomLeft, bottomRight } = indicesToArrays(TL, TR, BL, BR);
+
+            // Helper function to fill a block
+            function fillBlock(blockId, blockArray) {
+                const block = document.querySelector(`[data-block="${blockId}"]`);
+                const cells = block.querySelectorAll(".sudoku-cell");
+                
+                blockArray.flat().forEach((value, index) => {
+                    cells[index].textContent = value; // Set the cell value
+                });
+            }
+
+            // Fill each block with corresponding array
+            fillBlock("TL", topLeft);
+            fillBlock("TR", topRight);
+            fillBlock("BL", bottomLeft);
+            fillBlock("BR", bottomRight);
+        }
+        function generateBlocks() {
+            const blockLocations = ['TL', 'TM', 'TR', 'ML', 'MM', 'MR', 'BL', 'BM', 'BR'];
+            let html = '';
+
+            blockLocations.forEach((block, blockIndex) => {
+                html += `<div class="sudoku-block" data-block="${block}">`;
+
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        const spacePosition = `[${row}, ${col}]`;
+                        html += `<div class="sudoku-cell" data-block="${block}" data-space="${spacePosition}"></div>`;
+                    }
+                }
+
+                html += `</div>`;
+            });
+
+            return html;
+        }
+
+        // Dynamically insert the Sudoku board
+        document.getElementById('sudoku-board').innerHTML = generateBlocks();
+    </script>
+
+</body>
+</html>
